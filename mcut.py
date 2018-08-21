@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import sys
+import dithering as dit
 
 IMG_PATH = sys.argv[1]
 IMG = cv2.imread(IMG_PATH, 1)
@@ -93,4 +94,15 @@ for i in range(rows):
 		new_img[i][j][1] = color[1]
 		new_img[i][j][2] = color[2]
 
-cv2.imwrite("painted2"+IMG_PATH,new_img)
+new_img[0][1][0] = (new_img[0][1][0] - 1) % 255
+new_img[0][1][1] = (new_img[0][1][1] - 1) % 255
+new_img[0][1][2] = (new_img[0][1][2] - 1) % 255
+
+
+final_img = dit.floyd(new_img, colorMap)
+
+if(np.array_equal(final_img, new_img)):
+	print 'hello'
+cv2.imwrite("dithered"+IMG_PATH,final_img)
+cv2.imwrite("undithered"+IMG_PATH,new_img)
+
