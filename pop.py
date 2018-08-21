@@ -14,7 +14,7 @@ r = np.zeros((32,32,32))
 def comp(Tuple):
 	return Tuple[0]
 
-num_clr = sys.argv[2]
+num_clr = int(sys.argv[2])
 rows =len(IMG)
 cols =len(IMG[0])
 
