@@ -13,6 +13,7 @@ num_clr = int(sys.argv[2])
 rdict = {}
 bdict = {}
 gdict = {}
+coldict = {}
 
 colors = []
 K = 1
@@ -24,6 +25,7 @@ def bd(Tuple):
 	return Tuple[0]
 def returnColorMap(LIST):
 	global K
+	print (K)
 	if K == num_clr :
 		return LIST
 	newList = []
@@ -56,20 +58,32 @@ for i in range(rows):
 		red = IMG[i][j][2]
 		try:
 			bdict[blue]
-			gdict[green]
-			rdict[red]
 		except KeyError:
 			bdict[blue] = 1
+		try:
+			gdict[green]
+		except KeyError:
 			gdict[green] = 1
+		try:
+			rdict[red]
+		except KeyError:
 			rdict[red] = 1
-			colors.append((blue,green,red))
+		try:
+			coldict[(blue,green,red)]
+		except KeyError:
+			coldict[(blue,green,red)] = 1
+
+for key in coldict:
+	colors.append(key)
 
 finalList = returnColorMap([(colors,(len(bdict),len(gdict),len(rdict)))])
+
 colorMap = []
 for x in finalList:
 	bsum = 0
 	rsum = 0
 	gsum = 0
+	print (len(x[0]))
 	for y in x[0]:
 		bsum+=y[0]
 		gsum+=y[1]
@@ -99,10 +113,10 @@ new_img[0][1][1] = (new_img[0][1][1] - 1) % 255
 new_img[0][1][2] = (new_img[0][1][2] - 1) % 255
 
 
-final_img = dit.floyd(new_img, colorMap)
+final_img = dit.floyd(IMG, colorMap)
 
 if(np.array_equal(final_img, new_img)):
-	print 'hello'
+	print('hello')
 cv2.imwrite("dithered"+IMG_PATH,final_img)
 cv2.imwrite("undithered"+IMG_PATH,new_img)
 
