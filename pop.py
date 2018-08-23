@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import sys
+import edge_detection as ed
 
 IMG_PATH = sys.argv[1]
 IMG = cv2.imread(IMG_PATH, 1)
@@ -62,7 +63,57 @@ for i in range(rows):
 		new_img[i][j][1] = color[2]
 		new_img[i][j][2] = color[3]
 
-cv2.imwrite("painted"+IMG_PATH,new_img)
+#******************************-------------------------****************************
+def rendering(input_img_grayscale, color_q_img, ksize, sigma, tau, epsilon, pheta, threshold):
+	#for painterly rendered image
+	#in xdog image, edges are white and background is black
+	out_img = ed.xDoG(input_img_grayscale, ksize, sigma, tau, epsilon, pheta)
+	rows = input_img_grayscale.shape[0]
+	cols = input_img_grayscale.shape[1]
+	final_img = np.zeros((rows, cols, 3))
+	for r in range(rows):
+		for c in range(cols):
+			if out_img[r][c] < threshold:	#background
+				final_img[r][c][0] = color_q_img[r][c][0]
+				final_img[r][c][1] = color_q_img[r][c][1]
+				final_img[r][c][2] = color_q_img[r][c][2]
+			else:
+				final_img[r][c][0] = 0
+				final_img[r][c][1] = 0
+				final_img[r][c][2] = 0
+				
+	return final_img
+#******************************----------------------------*************************
+
+def get_threshold(input_grayscale_img, ksize, sigma, tau, epsilon, pheta):
+	edge_img = ed.xDoG(input_grayscale_img, ksize, sigma, tau, epsilon, pheta)
+	avg = 0
+	rows = edge_img.shape[0]
+	cols = edge_img.shape[1]
+	for r in range(rows):
+		for c in range(cols):
+			avg += edge_img[r][c]
+	avg = int(avg/(rows * cols))
+	return avg
+
+#*****************************----------------------------**************************
+
+cv2.imwrite("pop"+IMG_PATH,new_img)
+if (len(sys.argv) > 3):
+	grayscale_img = cv2.imread(IMG_PATH, 0)
+	ksize = int(sys.argv[3])
+	sigma = float(sys.argv[4])
+	tau = float(sys.argv[5])
+	epsilon = float(sys.argv[6])
+	pheta = float(sys.argv[7])
+	
+	if(len(sys.argv) > 8):
+		threshold = int(sys.argv[8])
+	else:
+		threshold = get_threshold(grayscale_img, ksize, sigma, tau, epsilon, pheta)
+	
+	out_painted = rendering(grayscale_img, new_img, ksize, sigma, tau, epsilon, pheta, threshold)
+	cv2.imwrite('out_painted'+IMG_PATH, out_painted)
 
 '''
 hist = cv2.calcHist([IMG],[0,1,2],None,[cr,cr,cr],[0,256,0,256,0,256])
