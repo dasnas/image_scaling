@@ -9,17 +9,27 @@ IMG = cv2.imread(IMG_PATH, 1)
 def write_to_img(img, out_path):
 	cv2.imwrite(img, out_path)
 	
-def getcolor(Tuple, colorMap):
-	minD = (colorMap[0][0] - Tuple[0])**2 + (colorMap[0][1] - Tuple[1])**2 + (colorMap[0][2] - Tuple[2])**2
-	clr = (0,0,0)
-	for x in colorMap:
-		D = (x[0] - Tuple[0])**2 + (x[1] - Tuple[1])**2 + (x[2] - Tuple[2])**2
-		if D<minD:
-			minD = D
-			clr = x
-	return clr
-	
-def floyd(input_img, colorMap):
+def getcolor(Tuple, colorMap, median):
+	if median:
+		minD = (colorMap[0][0] - Tuple[0])**2 + (colorMap[0][1] - Tuple[1])**2 + (colorMap[0][2] - Tuple[2])**2
+		clr = (0,0,0)
+		for x in colorMap:
+			D = (x[0] - Tuple[0])**2 + (x[1] - Tuple[1])**2 + (x[2] - Tuple[2])**2
+			if D<minD:
+				minD = D
+				clr = x
+		return clr
+	else:
+		minD = (colorMap[0][1] - Tuple[0])**2 + (colorMap[0][2] - Tuple[1])**2 + (colorMap[0][3] - Tuple[2])**2
+		clr = (0,0,0)
+		for x in colorMap:
+			D = (x[1] - Tuple[0])**2 + (x[2] - Tuple[1])**2 + (x[3] - Tuple[2])**2
+			if D<minD:
+				minD = D
+				clr = (x[1], x[2], x[3])
+		return clr
+
+def floyd(input_img, colorMap, median):
 	out_img = np.copy(input_img)
 	rows = out_img.shape[0]
 	cols = out_img.shape[1]
@@ -29,7 +39,7 @@ def floyd(input_img, colorMap):
 			old_b = out_img[i][j][0]
 			old_g = out_img[i][j][1]
 			old_r = out_img[i][j][2]
-			new = getcolor(out_img[i][j], colorMap)
+			new = getcolor(out_img[i][j], colorMap, median)
 			
 			out_img[i][j][0] = new[0]
 			out_img[i][j][1] = new[1]

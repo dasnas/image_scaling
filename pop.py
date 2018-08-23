@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import sys
 import edge_detection as ed
+import dithering as dit
 
 IMG_PATH = sys.argv[1]
 IMG = cv2.imread(IMG_PATH, 1)
@@ -98,6 +99,8 @@ def get_threshold(input_grayscale_img, ksize, sigma, tau, epsilon, pheta):
 
 #*****************************----------------------------**************************
 
+#final_img = dit.floyd(IMG, color_map, 0)
+#cv2.imwrite("dithered"+IMG_PATH,final_img)
 cv2.imwrite("pop"+IMG_PATH,new_img)
 if (len(sys.argv) > 3):
 	grayscale_img = cv2.imread(IMG_PATH, 0)

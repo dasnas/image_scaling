@@ -148,7 +148,7 @@ def get_threshold(input_grayscale_img, ksize, sigma, tau, epsilon, pheta):
 
 #*****************************----------------------------**************************
 
-#final_img = dit.floyd(IMG, colorMap)
+#final_img = dit.floyd(IMG, colorMap, 1)
 
 #if(np.array_equal(final_img, new_img)):
 #	print('hello')

@@ -55,7 +55,7 @@ ksize: 5
 sigma: 1.2
 tau: 0.984
 epsilon: ~0?
-pheta: ~1?
+pheta: ~0.001?
 '''
 
 def xDoG(img, ksize, sigma, tau, epsilon, pheta):	
